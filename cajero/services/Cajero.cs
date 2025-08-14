@@ -109,6 +109,10 @@ public class Cajero
                             menu = false;
                             this.MostrarMovimientos();
                             break;
+                        case 5:
+                            menu = false;
+                            this.CambiarClave();
+                            break;
                         default:
                             menu = false;
                             break;
@@ -136,7 +140,7 @@ public class Cajero
             {
                 Console.WriteLine("Ingresa el Usuario: ");
                 user = Console.ReadLine();
-                Console.WriteLine("Ingresa el Contraseña: ");
+                Console.WriteLine("Ingresa la contraseña: ");
                 password = Console.ReadLine();
 
                 var existe = usuarios.FirstOrDefault(u =>
@@ -149,7 +153,7 @@ public class Cajero
                     usuario.numeroCuenta = existe[0];
                     usuario.nombre = existe[1];
                     usuario.apellido = existe[2];
-                    usuario.contraseña = existe[3];
+                    usuario.clave = existe[3];
                     usuario.saldo = decimal.Parse(existe[4]);
 
                     Console.WriteLine("");
@@ -162,7 +166,7 @@ public class Cajero
                 else
                 {
                     char option;
-                    Console.WriteLine("Usuario y/o contraseña equivocados");
+                    Console.WriteLine("Usuario y/o clave equivocados");
                     Console.WriteLine("Oprima 1 para intentar nuevamente");
                     option = char.Parse(Console.ReadLine());
                     switch (option)
@@ -398,6 +402,63 @@ public class Cajero
         }
     }
 
+    void CambiarClave()
+    {
+        char opcion;
+        string clave;
+        string confirmacionClave;
+        bool repetir = false;
+        do
+        {
+            repetir = false;
+            Console.Clear();
+            Console.WriteLine("Ingrese nueva clave");
+            clave = Console.ReadLine();
+            Console.WriteLine("Confirme nueva clave");
+            confirmacionClave = Console.ReadLine();
+
+            if (clave.Equals(confirmacionClave))
+            {
+                int index = usuarios.FindIndex(x => x[0] == usuario.numeroCuenta);
+                usuario.clave = clave;
+                usuarios[index][3] = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(clave));
+                GuardarUsuarios();
+                Console.WriteLine("Clave cambiada exitosamente");
+                Console.WriteLine("¿Desea volver al menú?\n1.Si\n(Otra tecla). Terminar");
+
+                opcion = char.Parse(Console.ReadLine());
+
+                switch (opcion)
+                {
+                    case '1':
+                        Menu();
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else
+            {
+                Console.WriteLine("las claves no coinciden");
+                Console.WriteLine("¿Desea volver a intentar?\n1.Si\n(Otra tecla). No");
+
+                opcion = char.Parse(Console.ReadLine());
+
+                switch (opcion)
+                {
+                    case '1':
+                        repetir = true;
+                        break;
+                    default:
+                        Menu();
+                        break;
+                }
+            }
+
+        } while (repetir);
+
+
+    }
     // métodos de persistencia
     void GuardarUsuarios()
     {
