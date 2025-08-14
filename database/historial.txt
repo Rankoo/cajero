@@ -1,3 +1,4 @@
 1233492717	2025-08-13 22:55:44	Deposito	130000	Se depositó 130000, la cuenta queda con 1130000
 1233492717	2025-08-13 23:40:05	Deposito	200000	Se depositó 200000, la cuenta queda con 1200000
 1233492717	2025-08-13 23:57:46	Consignacion	5000000	Se envio 5000000 a la cuenta 1233492716, la cuenta queda con 5200000
+1233492717	2025-08-14 00:08:48	Retiro	200000	Se retiro 200000, la cuenta queda con 1000000

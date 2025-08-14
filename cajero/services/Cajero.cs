@@ -99,7 +99,15 @@ public class Cajero
                             break;
                         case 2:
                             menu = false;
-                            this.ConsigarODespositar();
+                            this.Retirar();
+                            break;
+                        case 3:
+                            menu = false;
+                            this.MostrarSaldo();
+                            break;
+                        case 4:
+                            menu = false;
+                            this.MostrarMovimientos();
                             break;
                         default:
                             menu = false;
@@ -181,20 +189,20 @@ public class Cajero
     private void ConsigarODespositar()
     {
         bool repetir = false;
-        int opcion;
+        char opcion;
         do
         {
-            Console.Creal();
+            Console.Clear();
             PintarMenu("¿Que operacion quiere realizar?", ["1. Deposito", "2. Consignación", "(Otra tecla). Salir"]);
-            opcion = int.Parse(Console.ReadLine());
+            opcion = char.Parse(Console.ReadLine());
 
             switch (opcion)
             {
 
-                case 1:
+                case '1':
                     depositar();
                     break;
-                case 2:
+                case '2':
                     consignar();
                     break;
                 default:
@@ -282,6 +290,115 @@ public class Cajero
         } while (repetir);
     }
 
+    void Retirar()
+    {
+        int opcion;
+        decimal cantidad;
+        bool repetir = false;
+        do
+        {
+            repetir = false;
+            Console.Clear();
+            Console.WriteLine($"ingresa la cantidad a retirar: ");
+            cantidad = decimal.Parse(Console.ReadLine());
+            decimal total = usuario.saldo - cantidad;
+            PintarMenu($"Retiro", $"Cantidad: {cantidad}, totlal: {total}", ["1. Si", "2. No", "(Otra tecla). Volver al menú"]);
+            opcion = int.Parse(Console.ReadLine());
+
+            switch (opcion)
+            {
+                case 1:
+                    int index = usuarios.FindIndex(x => x[0] == usuario.numeroCuenta);
+                    usuario.saldo = total;
+                    usuarios[index][4] = total.ToString();
+                    GuardarUsuarios();
+                    RegistrarMovimiento(acciones.Retiro, cantidad, $"Se retiro {cantidad}, la cuenta queda con {total}");
+                    break;
+                case 2:
+                    repetir = true;
+                    break;
+                default:
+                    Menu();
+                    repetir = false;
+                    break;
+            }
+        }
+        while (repetir);
+    }
+
+    void MostrarSaldo()
+    {
+        char opcion;
+        Console.Clear();
+        PintarMenu($"Consulta", $"Usuario: {usuario.nombre}, saldo disponible: {usuario.saldo}", ["1. Volver al menu", "(Otra tecla). Terminar"]);
+        opcion = char.Parse(Console.ReadLine());
+
+        switch (opcion)
+        {
+            case '1':
+                Menu();
+                break; 
+            default:
+                break;
+        }
+    }
+
+    void MostrarMovimientos()
+    {
+        char opcion;
+        Console.Clear();
+        List<string[]> movimientos = new List<string[]>();
+
+        // 3. Leer datos si hay algo
+        using (StreamReader srMovimientos = new StreamReader(_RUTA_HISTORIAL))
+        {
+            string? linea;
+            while ((linea = srMovimientos.ReadLine()) != null)
+            {
+                string[] movimiento = linea.Split('\t');
+                movimientos.Add(movimiento);
+            }
+        }
+
+        var listaMovimientos = movimientos
+            .Where(x => x[0] == usuario.numeroCuenta)
+            .OrderByDescending(x => DateTime.ParseExact(x[1], "yyyy-MM-dd HH:mm:ss", null))
+            .Take(5)
+            .ToList();
+        string borde = new string('*', 80);
+        Console.WriteLine(borde);
+        Console.WriteLine("Consulta");
+        Console.WriteLine(borde);
+        Console.WriteLine($"Usuario: {usuario.nombre}, últimos 5 movimientos");
+        Console.WriteLine(borde);
+
+        foreach(var mov in listaMovimientos)
+        {
+
+            Console.WriteLine($"Usuario: {mov[0]}\tFecha del movimiento: {mov[1]}\n"
+                +$"Tipo de consulta: {mov[2].ToUpper()}\tCantidad movida: {mov[3]}\n"
+                +$"\nDescripción:\n"
+                +$"{mov[4]}\n");
+
+            Console.WriteLine(borde);
+        }
+
+
+        Console.WriteLine("¿Desea volver al menú?\n1.Si\n(Otra tecla). Terminar");
+
+        opcion = char.Parse(Console.ReadLine());
+
+        switch (opcion)
+        {
+            case '1':
+                Menu();
+                break;
+            default:
+                break;
+        }
+    }
+
+    // métodos de persistencia
     void GuardarUsuarios()
     {
         try
@@ -329,6 +446,7 @@ public class Cajero
             Console.ReadKey();
         }
     }
+
     // Metodo para dibujar menus
     private void PintarMenu(string titulo, string subtitulo, string[] opciones)
     {
