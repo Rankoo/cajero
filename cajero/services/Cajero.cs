@@ -48,33 +48,37 @@ public class Cajero
     public void Menu()
     {
         bool menu = true;
-        int opcion;
+        char opcion;
 
         try
         {
             while (menu)
             {
                 Console.Clear();
+
+                // Menu si el úsuario no a ingresado
                 if (usuario == null)
                 {
 
                     Console.Clear();
-                    this.PintarMenu("Bienvenido", "Escoja una Opción:", ["1. Iniciar Sesión", "2. Salir"]);
-                    opcion = int.Parse(Console.ReadLine());
+                    this.PintarMenu("Bienvenido", "Escoja una Opción:", ["1. Iniciar Sesión", "(Otra tecla). Salir"]);
+                    opcion = char.Parse(Console.ReadLine());
 
                     switch (opcion)
                     {
-                        case 1:
+                        case '1':
                             menu = false;
                             this.IniciarSesion();
                             break;
-                        case 2:
-                            menu = false;
-                            break;
                         default:
+                            menu = false;
+                            Console.WriteLine("Gracias por usar nuestros servicios\nOprima cualquier tecla para salir");
+                            Console.ReadKey(true);
                             break;
                     }
                 }
+
+                // Menu si el úsuario a ingresado
                 else
                 {
                     this.PintarMenu(
@@ -86,34 +90,36 @@ public class Cajero
                             "3. Consultar saldo",
                             "4. Ver últimos 5 movimientos",
                             "5. Cambiar clave",
-                            "6. Salir"
+                            "(Otra tecla). Salir"
                         ]);
 
-                    opcion = int.Parse(Console.ReadLine());
+                    opcion = char.Parse(Console.ReadLine());
 
                     switch (opcion)
                     {
-                        case 1:
+                        case '1':
                             menu = false;
                             this.ConsigarODespositar();
                             break;
-                        case 2:
+                        case '2':
                             menu = false;
                             this.Retirar();
                             break;
-                        case 3:
+                        case '3':
                             menu = false;
                             this.MostrarSaldo();
                             break;
-                        case 4:
+                        case '4':
                             menu = false;
                             this.MostrarMovimientos();
                             break;
-                        case 5:
+                        case '5':
                             menu = false;
                             this.CambiarClave();
                             break;
                         default:
+                            Console.WriteLine("Gracias por usar nuestros servicios");
+                            Console.ReadKey(true);
                             menu = false;
                             break;
                     }
@@ -122,7 +128,9 @@ public class Cajero
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            // Salida por si ingresan una tecla vacia
+            Console.WriteLine("Gracias por usar nuestros servicios\nOprima cualquier tecla para salir");
+            Console.ReadKey(true);
         }
     }
 
