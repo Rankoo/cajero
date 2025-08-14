@@ -99,7 +99,7 @@ public class Cajero
                             break;
                         case 2:
                             menu = false;
-                            this.ConsigarODespositar();
+                            this.Retirar();
                             break;
                         default:
                             menu = false;
@@ -181,20 +181,20 @@ public class Cajero
     private void ConsigarODespositar()
     {
         bool repetir = false;
-        int opcion;
+        char opcion;
         do
         {
-            Console.Creal();
+            Console.Clear();
             PintarMenu("¿Que operacion quiere realizar?", ["1. Deposito", "2. Consignación", "(Otra tecla). Salir"]);
-            opcion = int.Parse(Console.ReadLine());
+            opcion = char.Parse(Console.ReadLine());
 
             switch (opcion)
             {
 
-                case 1:
+                case '1':
                     depositar();
                     break;
-                case 2:
+                case '2':
                     consignar();
                     break;
                 default:
@@ -282,6 +282,43 @@ public class Cajero
         } while (repetir);
     }
 
+    void Retirar()
+    {
+        int opcion;
+        decimal cantidad;
+        bool repetir = false;
+        do
+        {
+            repetir = false;
+            Console.Clear();
+            Console.WriteLine($"ingresa la cantidad a retirar: ");
+            cantidad = decimal.Parse(Console.ReadLine());
+            decimal total = usuario.saldo - cantidad;
+            PintarMenu($"Retiro", $"Cantidad: {cantidad}, totlal: {total}", ["1. Si", "2. No", "(Otra tecla). Volver al menú"]);
+            opcion = int.Parse(Console.ReadLine());
+
+            switch (opcion)
+            {
+                case 1:
+                    int index = usuarios.FindIndex(x => x[0] == usuario.numeroCuenta);
+                    usuario.saldo = total;
+                    usuarios[index][4] = total.ToString();
+                    GuardarUsuarios();
+                    RegistrarMovimiento(acciones.Retiro, cantidad, $"Se retiro {cantidad}, la cuenta queda con {total}");
+                    break;
+                case 2:
+                    repetir = true;
+                    break;
+                default:
+                    Menu();
+                    repetir = false;
+                    break;
+            }
+        }
+        while (repetir);
+    }
+
+    // metodos de persistencia
     void GuardarUsuarios()
     {
         try
