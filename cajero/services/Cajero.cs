@@ -105,6 +105,10 @@ public class Cajero
                             menu = false;
                             this.MostrarSaldo();
                             break;
+                        case 4:
+                            menu = false;
+                            this.MostrarMovimientos();
+                            break;
                         default:
                             menu = false;
                             break;
@@ -339,7 +343,62 @@ public class Cajero
         }
     }
 
-    // metodos de persistencia
+    void MostrarMovimientos()
+    {
+        char opcion;
+        Console.Clear();
+        List<string[]> movimientos = new List<string[]>();
+
+        // 3. Leer datos si hay algo
+        using (StreamReader srMovimientos = new StreamReader(_RUTA_HISTORIAL))
+        {
+            string? linea;
+            while ((linea = srMovimientos.ReadLine()) != null)
+            {
+                string[] movimiento = linea.Split('\t');
+                movimientos.Add(movimiento);
+            }
+        }
+
+        var listaMovimientos = movimientos
+            .Where(x => x[0] == usuario.numeroCuenta)
+            .OrderByDescending(x => DateTime.ParseExact(x[1], "yyyy-MM-dd HH:mm:ss", null))
+            .Take(5)
+            .ToList();
+        string borde = new string('*', 80);
+        Console.WriteLine(borde);
+        Console.WriteLine("Consulta");
+        Console.WriteLine(borde);
+        Console.WriteLine($"Usuario: {usuario.nombre}, últimos 5 movimientos");
+        Console.WriteLine(borde);
+
+        foreach(var mov in listaMovimientos)
+        {
+
+            Console.WriteLine($"Usuario: {mov[0]}\tFecha del movimiento: {mov[1]}\n"
+                +$"Tipo de consulta: {mov[2].ToUpper()}\tCantidad movida: {mov[3]}\n"
+                +$"\nDescripción:\n"
+                +$"{mov[4]}\n");
+
+            Console.WriteLine(borde);
+        }
+
+
+        Console.WriteLine("¿Desea volver al menú?\n1.Si\n(Otra tecla). Terminar");
+
+        opcion = char.Parse(Console.ReadLine());
+
+        switch (opcion)
+        {
+            case '1':
+                Menu();
+                break;
+            default:
+                break;
+        }
+    }
+
+    // métodos de persistencia
     void GuardarUsuarios()
     {
         try
