@@ -2,10 +2,10 @@ using System;
 
 public class Usuario
 {
-    private string numeroCuenta {  get; set; }
-    private string nombre { get; set; }
-    private string apellido { get; set; }
-    string contraseña { get; set; }
-    private decimal saldo { get; set; }
+    public string numeroCuenta {  get; set; }
+    public string nombre { get; set; }
+    public string apellido { get; set; }
+    public string contraseña { get; set; }
+    public decimal saldo { get; set; }
 
 }
