@@ -101,6 +101,10 @@ public class Cajero
                             menu = false;
                             this.Retirar();
                             break;
+                        case 3:
+                            menu = false;
+                            this.MostrarSaldo();
+                            break;
                         default:
                             menu = false;
                             break;
@@ -318,6 +322,23 @@ public class Cajero
         while (repetir);
     }
 
+    void MostrarSaldo()
+    {
+        char opcion;
+        Console.Clear();
+        PintarMenu($"Consulta", $"Usuario: {usuario.nombre}, saldo disponible: {usuario.saldo}", ["1. Volver al menu", "(Otra tecla). Terminar"]);
+        opcion = char.Parse(Console.ReadLine());
+
+        switch (opcion)
+        {
+            case '1':
+                Menu();
+                break; 
+            default:
+                break;
+        }
+    }
+
     // metodos de persistencia
     void GuardarUsuarios()
     {
@@ -366,6 +387,7 @@ public class Cajero
             Console.ReadKey();
         }
     }
+
     // Metodo para dibujar menus
     private void PintarMenu(string titulo, string subtitulo, string[] opciones)
     {
